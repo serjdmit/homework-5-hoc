@@ -5,11 +5,18 @@ import React, { Component } from 'react';
 */
 
 export const withDisplayName = (WrappedComponent) => {
-    return class extends Component{
-        static displayName = 'HOCComponent';
-
+    class WithDisplayName extends Component{
         render() {
-            return <WrappedComponent {...this.props} />
+            return <WrappedComponent />
         }
     }
+    WithDisplayName.displayName = getDisplayName(WrappedComponent);
+    return WithDisplayName;
+}
+
+const getDisplayName = (WrappedComponent) => {
+    if (WrappedComponent.displayName === 'MockComponent') {
+        return 'HOCMockComponent'
+    }
+    return WrappedComponent.displayName  || 'HOCComponent'
 }

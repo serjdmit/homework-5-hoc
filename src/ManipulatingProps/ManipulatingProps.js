@@ -16,7 +16,7 @@ const LoadingSpinner = () => <div>Loading...</div>;
 export const withLoading = (WrappedComponent) => {
     return class extends Component{
         render() {
-            return this.props.loading ? <LoadingSpinner /> : <WrappedComponent />
+            return this.props.loading ? <LoadingSpinner /> : <WrappedComponent {...this.props} />
         }
     }
 }
@@ -34,15 +34,11 @@ export const withLoading = (WrappedComponent) => {
 
   const user = getLoggedInUser()
 */
-const user = getLoggedInUser();
-
 export const addLoggedInUser = (WrappedComponent) => {
     return class extends Component{
-        state = {
-            user: user
-        }
         render() {
-            return <WrappedComponent user={user} />;
+            const user = getLoggedInUser();
+            return <WrappedComponent {...this.props} user={user} />;
         }
     }
 }
@@ -59,4 +55,16 @@ export const addLoggedInUser = (WrappedComponent) => {
   и передаст в обёрнутый компонент
 */
 
-export const withSort = () => {}
+export const withSort = (WrappedComponent) => {
+    return class extends Component {
+        render() {
+            const books = this.props.books;
+            const sortedBooks = books.sort((a, b) => {
+                const sortObjectA = a.author.toLowerCase();
+                const sortObjectB = b.author.toLowerCase();
+                return (sortObjectA < sortObjectB) ? -1 : (sortObjectA > sortObjectB) ? 1 : 0
+            });
+            return <WrappedComponent books={sortedBooks} />
+        }
+    }
+}
