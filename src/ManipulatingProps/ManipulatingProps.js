@@ -13,7 +13,13 @@ import {getLoggedInUser} from '../utils'
 
 const LoadingSpinner = () => <div>Loading...</div>;
 
-export const withLoading = () => {}
+export const withLoading = (WrappedComponent) => {
+    return class extends Component{
+        render() {
+            return this.props.loading ? <LoadingSpinner /> : <WrappedComponent {...this.props} />
+        }
+    }
+}
 
 /*
   Следующий HOC - injector, его особенность в том,
@@ -28,9 +34,14 @@ export const withLoading = () => {}
 
   const user = getLoggedInUser()
 */
-
-
-export const addLoggedInUser = () => {}
+export const addLoggedInUser = (WrappedComponent) => {
+    return class extends Component{
+        render() {
+            const user = getLoggedInUser();
+            return <WrappedComponent {...this.props} user={user} />;
+        }
+    }
+}
 
 /*
   Помимо добавления новых пропов можно модифицировать те,
@@ -44,4 +55,16 @@ export const addLoggedInUser = () => {}
   и передаст в обёрнутый компонент
 */
 
-export const withSort = () => {}
+export const withSort = (WrappedComponent) => {
+    return class extends Component {
+        render() {
+            const books = this.props.books;
+            const sortedBooks = books.sort((a, b) => {
+                const sortObjectA = a.author.toLowerCase();
+                const sortObjectB = b.author.toLowerCase();
+                return (sortObjectA < sortObjectB) ? -1 : (sortObjectA > sortObjectB) ? 1 : 0
+            });
+            return <WrappedComponent books={sortedBooks} />
+        }
+    }
+}
